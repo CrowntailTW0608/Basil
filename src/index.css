@@ -1,0 +1,33 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Zhi+Mang+Xing&display=swap');
+
+@theme {
+  --font-sans: "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Zhi+Mang+Xing", cursive;
+}
+
+body {
+  background-color: #fcfaf2;
+  color: #2d3a3a;
+}
+
+.herb-gradient {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
