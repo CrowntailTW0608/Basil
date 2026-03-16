@@ -443,7 +443,7 @@ export default function App() {
           
           <div className="flex items-center gap-6">
             <div className="text-right hidden md:block">
-              <div className="text-sm text-slate-500">製作於 2026 園遊會</div>
+              <div className="text-sm text-slate-500">製作於 2026 園遊會 302</div>
               <div className="text-emerald-400 font-bold">Happy Planting!</div>
             </div>
             <div className="flex flex-col items-center md:items-end gap-2">
@@ -463,7 +463,7 @@ export default function App() {
           </div>
         </div>
         <div className="mt-12 pt-8 border-t border-slate-800 text-center text-slate-600 text-xs">
-          &copy; 2026 九層塔小學堂. 使用 React + Tailwind CSS 打造.
+          &copy; 2026 九層塔小學堂. 
         </div>
       </footer>
     </div>
