@@ -172,10 +172,14 @@ export default function BasilGame() {
       }
       if (c.bud > 0 && spawnAcc.current.bud >= c.bud) {
         spawnAcc.current.bud = 0;
-        // 計算當前莖的可見葉節（與 BasilPlantSVG 相同邏輯）
-        const growth = Math.round((DURATION - timeRef.current) / DURATION * 100);
-        const tipY   = 148 - (growth / 100) * 96;
-        const nodeYs = [130, 114, 99, 84, 70].filter(ny => tipY <= ny - 8);
+        // 計算當前可見葉節（與 BasilPlantSVG 分枝邏輯一致）
+        const growth    = Math.round((DURATION - timeRef.current) / DURATION * 100);
+        const mainTipY  = 161 - Math.min(1, growth / 30) * 66;
+        const nodeYs: number[] = [];
+        if (mainTipY <= 140) nodeYs.push(148); // 主莖第一對葉
+        if (mainTipY <= 118) nodeYs.push(126); // 主莖第二對葉
+        if (growth >= 44)    nodeYs.push(76);  // 分枝葉（下）
+        if (growth >= 62)    nodeYs.push(59);  // 分枝葉（上）
         if (nodeYs.length > 0) {
           const nodeY  = nodeYs[Math.floor(Math.random() * nodeYs.length)];
           const gameY  = 120 + nodeY - 10; // 120 = 植株 SVG top 在遊戲區的 y 偏移
