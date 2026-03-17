@@ -1,20 +1,71 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🌿 九層塔種植小學堂
 
-# Run and deploy your AI Studio app
+> 一個專為校園園遊會設計的互動教育網站，帶你認識如何種植與照顧九層塔（羅勒）！
 
-This contains everything you need to run your app locally.
+## 專案簡介
 
-View your app in AI Studio: https://ai.studio/apps/5d495308-8435-4d7d-a1f4-ac645cd20a47
+**九層塔種植小學堂** 是一款寓教於樂的互動網頁應用，透過模擬植物生長的小遊戲，讓使用者在遊玩的過程中學習九層塔的種植知識與日常照顧技巧。
 
-## Run Locally
+### 功能特色
 
-**Prerequisites:**  Node.js
+- 🎮 **互動種植遊戲** — 即時模擬植物健康、水分、陽光狀態，體驗種植的樂趣
+- 🌱 **5 步驟種植指南** — 清楚易懂的圖文教學
+- ☀️ **環境照顧提示** — 陽光、溫度、通風等重要提醒
+- ✅ **日常照顧清單** — 6 項養護要點一覽
+- 💚 **點讚功能** — 記錄並儲存你的喜愛（localStorage 持久化）
 
+## 技術棧
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+| 用途 | 套件 |
+|------|------|
+| UI 框架 | React 19 |
+| 語言 | TypeScript |
+| 動畫 | motion/react |
+| 圖標 | lucide-react |
+| 樣式 | TailwindCSS 4 |
+| 建構工具 | Vite 6 |
+
+## 快速開始
+
+**前置需求：** Node.js
+
+```bash
+# 安裝依賴套件
+npm install
+
+# 啟動開發伺服器（http://localhost:3000）
+npm run dev
+```
+
+## 常用指令
+
+```bash
+npm run dev      # 啟動開發伺服器
+npm run build    # 生產環境建構
+npm run preview  # 預覽建構結果
+npm run lint     # TypeScript 型別檢查
+npm run clean    # 清理 dist 目錄
+```
+
+## 部署
+
+本專案部署於 **GitHub Pages**，production 模式下 base 路徑為 `/Basil/`。
+
+```bash
+npm run build
+# 將 dist/ 目錄內容部署至 GitHub Pages
+```
+
+## 遊戲規則
+
+植物生長遊戲以每秒為單位更新狀態：
+
+| 條件 | 效果 |
+|------|------|
+| 水分 < 20% 或 > 90% | HP -2 / 秒 |
+| 陽光 < 30% 或 > 95% | HP -1 / 秒 |
+| 水分 40–80% 且陽光 50–90% | 成長 +1% / 秒 |
+| 每秒自然消耗 | 水分 -2、陽光 -1.5 |
+| 按下澆水 / 曬太陽按鈕 | +15 |
+
+成長達到 100% 即獲勝；HP 歸零則遊戲結束。
