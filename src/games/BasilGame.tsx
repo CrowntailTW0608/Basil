@@ -274,7 +274,7 @@ export default function BasilGame() {
                 )}
                 <div className="flex gap-6 justify-center text-sm text-slate-600 flex-wrap">
                   <span>🐛 點擊除蟲 <b>+2</b></span>
-                  <span>🌸 點擊摘除花穗 <b>+3</b></span>
+                  <span>🪻 點擊摘除花穗 <b>+3</b></span>
                   <span>💧 點擊接水 <b>+1</b></span>
                 </div>
                 <p className="text-slate-400 text-xs">害蟲未除 → 損血｜花穗未摘 → 成長暫停｜水滴未接 → 水分下降</p>
@@ -384,7 +384,7 @@ export default function BasilGame() {
               style={{ left: `${b.x}%`, top: b.y, transform: 'translateX(-50%)' }}
               aria-label="摘除花穗"
             >
-              🌸
+              🪻
             </button>
           ))}
         </div>
@@ -392,7 +392,7 @@ export default function BasilGame() {
         {/* Legend strip */}
         <div className="px-6 py-3 flex justify-center gap-8 text-sm text-slate-400 border-t border-slate-100">
           <span>🐛 除蟲 <b className="text-slate-600">+2</b></span>
-          <span>🌸 摘除花穗 <b className="text-slate-600">+3</b></span>
+          <span>🪻 摘除花穗 <b className="text-slate-600">+3</b></span>
           <span>💧 接水 <b className="text-slate-600">+1</b></span>
         </div>
       </div>
