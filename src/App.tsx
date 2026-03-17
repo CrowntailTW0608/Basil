@@ -443,7 +443,7 @@ export default function App() {
           
           <div className="flex items-center gap-6">
             <div className="text-right hidden md:block">
-              <div className="text-sm text-slate-500">製作於 2026 園遊會 302</div>
+              <div className="text-sm text-slate-500">2026 義賣會 302</div>
               <div className="text-emerald-400 font-bold">Happy Planting!</div>
             </div>
             <div className="flex flex-col items-center md:items-end gap-2">

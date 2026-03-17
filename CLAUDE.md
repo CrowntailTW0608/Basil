@@ -17,7 +17,9 @@ npm run lint         # TypeScript 型別檢查（tsc --noEmit）
 npm run clean        # 清理 dist 目錄
 ```
 
-**環境設定：** 在 `.env.local` 中設置 `GEMINI_API_KEY=your_api_key`（Vite 透過 `import.meta.env.VITE_GEMINI_API_KEY` 曝露）。
+**環境設定：** 目前無需額外環境變數。
+
+**Production 部署：** `vite.config.ts` 在 production 模式下 `base` 為 `/Basil/`（對應 GitHub Pages 的 repo 名稱）。
 
 ## 架構
 
@@ -27,11 +29,12 @@ npm run clean        # 清理 dist 目錄
 
 遊戲使用 `useEffect` 配合 1 秒 interval 的狀態機：
 
-- **狀態變數**：`health`（HP）、`growth`（成長%）、`water`（水分%）、`sunlight`（陽光%）
+- **狀態變數**：`health`（HP）、`growth`（成長%）、`water`（水分%）、`sun`（陽光%）
 - **遊戲狀態**：`playing | won | lost`
 - **損傷規則**：水分 <20% 或 >90% 時 -2 HP/秒；陽光 <30% 或 >95% 時 -1 HP/秒
 - **成長條件**：水分 40-80% AND 陽光 50-90% 時 +1% 成長/秒
-- **消耗**：水分和陽光持續自然消耗，玩家透過按鈕補充
+- **消耗**：每秒 water -2、sun -1.5；玩家按鈕每次 +15
+- **補充**：澆水 `+15`、曬太陽 `+15`
 
 ### UI 區塊結構
 
@@ -65,4 +68,5 @@ npm run clean        # 清理 dist 目錄
 
 ### 持久化
 
-`localStorage` 用於保存使用者點贊次數（`likeCount` key）。
+`localStorage` 用於保存使用者點贊次數（key: `basil_likes`）。
+
