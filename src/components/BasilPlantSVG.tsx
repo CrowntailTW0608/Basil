@@ -6,71 +6,116 @@ interface Props {
   paused?: boolean;
 }
 
+/**
+ * 單片九層塔葉
+ * 坐標系：葉基在 (0,0)，葉尖朝 -Y 方向（螢幕上方）
+ */
+function Leaf({ fill, vein }: { fill: string; vein: string }) {
+  return (
+    <g>
+      {/* 葉身 — 卵形，頂端尖、基部圓 */}
+      <path
+        d="M 0,0
+           C -5,-1 -12,-5 -11,-13
+           C -10,-21 -5,-24 0,-26
+           C  5,-24  10,-21  11,-13
+           C  12,-5   5,-1   0,0 Z"
+        fill={fill}
+        stroke={vein}
+        strokeWidth="0.4"
+      />
+      {/* 主脈（中肋） */}
+      <line x1="0" y1="-0.5" x2="0" y2="-25" stroke={vein} strokeWidth="0.75"/>
+      {/* 側脈 */}
+      <line x1="0" y1="-8"  x2="-8"  y2="-12" stroke={vein} strokeWidth="0.35" opacity="0.65"/>
+      <line x1="0" y1="-8"  x2=" 8"  y2="-12" stroke={vein} strokeWidth="0.35" opacity="0.65"/>
+      <line x1="0" y1="-15" x2="-6"  y2="-19" stroke={vein} strokeWidth="0.35" opacity="0.65"/>
+      <line x1="0" y1="-15" x2=" 6"  y2="-19" stroke={vein} strokeWidth="0.35" opacity="0.65"/>
+    </g>
+  );
+}
+
 export default function BasilPlantSVG({ growth, health, paused = false }: Props) {
-  const sick   = health < 30;
-  const leaf   = paused ? '#94a3b8' : sick ? '#ca8a04' : '#22c55e';
-  const vein   = paused ? '#64748b' : sick ? '#92400e' : '#15803d';
-  const stem   = paused ? '#94a3b8' : sick ? '#a16207' : '#166534';
-  const s = (min: number) => growth >= min;
+  const sick = health < 30;
+  const fill = paused ? '#94a3b8' : sick ? '#ca8a04' : '#4ade80';
+  const vein = paused ? '#475569' : sick ? '#78350f' : '#166534';
+  const stem = paused ? '#94a3b8' : sick ? '#a16207' : '#166534';
+
+  // 莖從花盆土面 (y=148) 向上最多長 96px
+  const stemH = (growth / 100) * 96;
+  const tipY  = 148 - stemH;
+
+  // 只在莖尖通過節點 8px 以上時才顯示葉對
+  const showAt = (nodeY: number) => tipY <= nodeY - 8;
+
+  // 5 個節點：由下到上，葉片逐漸縮小
+  const NODES = [
+    { y: 130, s: 1.00 },
+    { y: 114, s: 0.90 },
+    { y:  99, s: 0.80 },
+    { y:  84, s: 0.70 },
+    { y:  70, s: 0.62 },
+  ];
+
+  // 葉片張開角度（與莖的夾角）
+  const ANGLE = 68;
 
   return (
     <svg viewBox="0 0 100 180" width="160" height="180" xmlns="http://www.w3.org/2000/svg">
-      {/* 花盆 */}
+
+      {/* ── 花盆 ── */}
       <rect x="26" y="148" width="48" height="7" rx="3.5" fill="#92400e"/>
       <path d="M30,155 L34,174 L66,174 L70,155 Z" fill="#b45309"/>
+      {/* 盆底陰影 */}
       <path d="M34,174 L66,174 L64,177 L36,177 Z" fill="#92400e"/>
+      {/* 盆高光 */}
+      <path d="M31,156 L35,170 L38,170 L34,156 Z" fill="#d97706" opacity="0.3"/>
       {/* 泥土 */}
       <ellipse cx="50" cy="150" rx="18" ry="4" fill="#78350f"/>
 
-      {/* 主莖 */}
-      <line x1="50" y1="148" x2="50" y2="52" stroke={stem} strokeWidth="2.5" strokeLinecap="round"/>
+      {/* ── 莖（從土面向上生長）── */}
+      {stemH > 0 && (
+        <line
+          x1="50" y1="148"
+          x2="50" y2={tipY}
+          stroke={stem}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      )}
 
-      {/* 第1對葉 — ≥8% */}
-      {s(8) && <>
-        <ellipse cx="34" cy="132" rx="14" ry="6.5" fill={leaf} transform="rotate(-22,34,132)"/>
-        <ellipse cx="66" cy="132" rx="14" ry="6.5" fill={leaf} transform="rotate(22,66,132)"/>
-        <line x1="50" y1="132" x2="35" y2="132" stroke={vein} strokeWidth="0.8"/>
-        <line x1="50" y1="132" x2="65" y2="132" stroke={vein} strokeWidth="0.8"/>
-      </>}
+      {/* ── 葉對（依節點位置逐一顯示）── */}
+      {NODES.map(({ y, s }, i) =>
+        showAt(y) ? (
+          <g key={i}>
+            {/* 左葉 */}
+            <g transform={`translate(50,${y}) rotate(-${ANGLE}) scale(${s})`}>
+              <Leaf fill={fill} vein={vein} />
+            </g>
+            {/* 右葉 */}
+            <g transform={`translate(50,${y}) rotate(${ANGLE}) scale(${s})`}>
+              <Leaf fill={fill} vein={vein} />
+            </g>
+          </g>
+        ) : null
+      )}
 
-      {/* 第2對葉 — ≥25% */}
-      {s(25) && <>
-        <ellipse cx="32" cy="116" rx="14" ry="6.5" fill={leaf} transform="rotate(-28,32,116)"/>
-        <ellipse cx="68" cy="116" rx="14" ry="6.5" fill={leaf} transform="rotate(28,68,116)"/>
-        <line x1="50" y1="116" x2="33" y2="116" stroke={vein} strokeWidth="0.8"/>
-        <line x1="50" y1="116" x2="67" y2="116" stroke={vein} strokeWidth="0.8"/>
-      </>}
-
-      {/* 第3對葉 — ≥45% */}
-      {s(45) && <>
-        <ellipse cx="31" cy="101" rx="13" ry="6" fill={leaf} transform="rotate(-33,31,101)"/>
-        <ellipse cx="69" cy="101" rx="13" ry="6" fill={leaf} transform="rotate(33,69,101)"/>
-        <line x1="50" y1="101" x2="32" y2="101" stroke={vein} strokeWidth="0.8"/>
-        <line x1="50" y1="101" x2="68" y2="101" stroke={vein} strokeWidth="0.8"/>
-      </>}
-
-      {/* 第4對葉 — ≥65% */}
-      {s(65) && <>
-        <ellipse cx="32" cy="86" rx="12" ry="5.5" fill={leaf} transform="rotate(-38,32,86)"/>
-        <ellipse cx="68" cy="86" rx="12" ry="5.5" fill={leaf} transform="rotate(38,68,86)"/>
-        <line x1="50" y1="86" x2="33" y2="86" stroke={vein} strokeWidth="0.8"/>
-        <line x1="50" y1="86" x2="67" y2="86" stroke={vein} strokeWidth="0.8"/>
-      </>}
-
-      {/* 第5對葉 — ≥82% */}
-      {s(82) && <>
-        <ellipse cx="35" cy="72" rx="11" ry="5" fill={leaf} transform="rotate(-42,35,72)"/>
-        <ellipse cx="65" cy="72" rx="11" ry="5" fill={leaf} transform="rotate(42,65,72)"/>
-        <line x1="50" y1="72" x2="36" y2="72" stroke={vein} strokeWidth="0.8"/>
-        <line x1="50" y1="72" x2="64" y2="72" stroke={vein} strokeWidth="0.8"/>
-      </>}
-
-      {/* 頂芽 — ≥55% */}
-      {s(55) && <>
-        <ellipse cx="43" cy="63" rx="9" ry="5" fill={leaf} transform="rotate(-15,43,63)"/>
-        <ellipse cx="57" cy="63" rx="9" ry="5" fill={leaf} transform="rotate(15,57,63)"/>
-        <ellipse cx="50" cy="55" rx="5" ry="7" fill={leaf}/>
-      </>}
+      {/* ── 頂芽（成長 ≥55% 時出現在莖尖）── */}
+      {growth >= 55 && (
+        <g transform={`translate(50,${tipY})`}>
+          <g transform="rotate(-28) scale(0.48)">
+            <Leaf fill={fill} vein={vein} />
+          </g>
+          <g transform="rotate(28) scale(0.48)">
+            <Leaf fill={fill} vein={vein} />
+          </g>
+          {/* 最頂端的嫩芽 */}
+          <path
+            d="M0,0 C -3,-4 -3,-10 0,-13 C 3,-10 3,-4 0,0 Z"
+            fill={fill} stroke={vein} strokeWidth="0.4"
+          />
+        </g>
+      )}
     </svg>
   );
 }
