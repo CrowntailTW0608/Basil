@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sprout, Trophy, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Trophy, AlertTriangle, RefreshCw } from 'lucide-react';
 import BasilPlantSVG from '@/src/components/BasilPlantSVG';
 import { getRandomDish } from '@/src/components/BasilDishes';
 import type { DishData } from '@/src/components/BasilDishes';
@@ -35,21 +35,6 @@ function uid(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-// Simple flower pot SVG
-function FlowerPot() {
-  return (
-    <svg width="72" height="52" viewBox="0 0 72 52" className="-mt-1">
-      {/* Rim */}
-      <rect x="4" y="0" width="64" height="11" rx="5" fill="#b5724a" />
-      {/* Soil */}
-      <ellipse cx="36" cy="5" rx="29" ry="6" fill="#6b3f1e" opacity="0.55" />
-      {/* Body */}
-      <polygon points="13,11 59,11 53,52 19,52" fill="#c9825a" />
-      {/* Highlight stripe */}
-      <polygon points="14,11 24,11 20,52 12,52" fill="#d99470" opacity="0.35" />
-    </svg>
-  );
-}
 
 // --- Component ---
 export default function BasilGame() {
@@ -269,9 +254,8 @@ export default function BasilGame() {
           {/* Idle screen */}
           {phase === 'idle' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-8 p-8">
-              <div className="flex flex-col items-center pointer-events-none">
-                <Sprout size={72} className="text-emerald-600" />
-                <FlowerPot />
+              <div className="pointer-events-none">
+                <BasilPlantSVG growth={10} health={100}/>
               </div>
               <div className="text-center space-y-3">
                 <h3 className="text-2xl font-bold text-slate-800">準備好了嗎？</h3>
