@@ -44,9 +44,9 @@ function uid(): string {
 
 
 // --- Water Drop SVG ---
-function WaterDrop() {
+function WaterDrop({ size = 28 }: { size?: number }) {
   return (
-    <svg viewBox="0 0 28 36" width="28" height="36" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 28 36" width={size} height={size * 36 / 28} xmlns="http://www.w3.org/2000/svg">
       {/* 主水滴 */}
       <path d="M14,2 C14,2 4,14 4,22 C4,28.6 8.5,34 14,34 C19.5,34 24,28.6 24,22 C24,14 14,2 14,2Z"
         fill="#60a5fa" stroke="#3b82f6" strokeWidth="0.8"/>
@@ -58,9 +58,9 @@ function WaterDrop() {
 }
 
 // --- Pest (caterpillar) SVG ---
-function Pest() {
+function Pest({ width = 44 }: { width?: number }) {
   return (
-    <svg viewBox="0 0 52 30" width="44" height="26" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+    <svg viewBox="0 0 52 30" width={width} height={width * 30 / 52} xmlns="http://www.w3.org/2000/svg" overflow="visible">
       <style>{`
         @keyframes pestWiggle {
           0%, 100% { transform: translateY(0px); }
@@ -116,9 +116,9 @@ function Pest() {
 
 // --- Basil Flower Spike SVG ---
 // 五層輪生花穗：深紫苞片 + 淡紫小花，由下（開）至上（苞）漸縮
-function FlowerSpike() {
+function FlowerSpike({ height = 46 }: { height?: number }) {
   return (
-    <svg viewBox="0 0 24 50" width="22" height="46" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 24 50" width={height * 22 / 46} height={height} xmlns="http://www.w3.org/2000/svg">
       {/* 花莖 */}
       <line x1="12" y1="48" x2="12" y2="4" stroke="#4a5020" strokeWidth="1.4" strokeLinecap="round"/>
 
@@ -443,9 +443,9 @@ export default function BasilGame() {
                   </div>
                 )}
                 <div className="flex gap-6 justify-center text-sm text-slate-600 flex-wrap items-center">
-                  <span className="flex items-center gap-1"><Pest /> 點擊除蟲 <b>+2</b></span>
-                  <span className="flex items-center gap-1"><span style={{ display: 'inline-block', transform: 'rotate(45deg)' }}><FlowerSpike /></span> 點擊摘除花穗 <b>+3</b></span>
-                  <span className="flex items-center gap-1"><WaterDrop /> 點擊接水 <b>+1</b></span>
+                  <span className="flex items-center gap-1"><Pest width={30} /> 點擊除蟲 <b>+2</b></span>
+                  <span className="flex items-center gap-1"><span style={{ display: 'inline-block', transform: 'rotate(45deg)' }}><FlowerSpike height={32} /></span> 點擊摘除花穗 <b>+3</b></span>
+                  <span className="flex items-center gap-1"><WaterDrop size={20} /> 點擊接水 <b>+1</b></span>
                 </div>
                 <p className="text-slate-400 text-xs">害蟲未除 → 損血｜花穗未摘 → 成長暫停｜水滴未接 → 水分下降</p>
               </div>
@@ -594,9 +594,9 @@ export default function BasilGame() {
 
         {/* Legend strip */}
         <div className="px-6 py-3 flex justify-center gap-8 text-sm text-slate-400 border-t border-slate-100 items-center">
-          <span className="flex items-center gap-1"><Pest /> 除蟲 <b className="text-slate-600">+2</b></span>
-          <span className="flex items-center gap-1"><span style={{ display: 'inline-block', transform: 'rotate(45deg)' }}><FlowerSpike /></span> 摘除花穗 <b className="text-slate-600">+3</b></span>
-          <span className="flex items-center gap-1"><WaterDrop /> 接水 <b className="text-slate-600">+1</b></span>
+          <span className="flex items-center gap-1"><Pest width={30} /> 除蟲 <b className="text-slate-600">+2</b></span>
+          <span className="flex items-center gap-1"><span style={{ display: 'inline-block', transform: 'rotate(45deg)' }}><FlowerSpike height={32} /></span> 摘除花穗 <b className="text-slate-600">+3</b></span>
+          <span className="flex items-center gap-1"><WaterDrop size={20} /> 接水 <b className="text-slate-600">+1</b></span>
         </div>
       </div>
 
