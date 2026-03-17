@@ -14,13 +14,13 @@ interface Drop { id: string; x: number; y: number }
 type Phase = 'idle' | 'playing' | 'won' | 'lost';
 
 // --- Constants ---
-const DURATION = 60;    // seconds
-const GAME_H   = 480;   // px, game area height
-const PEST_TTL = 2500;  // ms before pest expires → -HP
-const BUD_TTL  = 3500;  // ms before bud expires  → growth paused
-const DROP_SPD = 3;     // px per 50ms tick ≈ 60px/s
+const DURATION = 60;
+const GAME_H   = 480;
+const PEST_TTL = 2500;
+const BUD_TTL  = 3500;
+const DROP_SPD = 3;
+const LS_KEY   = 'basil_game_highscore';
 
-// Spawn intervals (ms) by time remaining
 function spawnCfg(t: number): { pest: number; drop: number; bud: number } {
   if (t > 45) return { pest: 2600, drop: 0,    bud: 0    };
   if (t > 30) return { pest: 2000, drop: 2000,  bud: 0    };
@@ -30,6 +30,22 @@ function spawnCfg(t: number): { pest: number; drop: number; bud: number } {
 
 function uid(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+// Simple flower pot SVG
+function FlowerPot() {
+  return (
+    <svg width="72" height="52" viewBox="0 0 72 52" className="-mt-1">
+      {/* Rim */}
+      <rect x="4" y="0" width="64" height="11" rx="5" fill="#b5724a" />
+      {/* Soil */}
+      <ellipse cx="36" cy="5" rx="29" ry="6" fill="#6b3f1e" opacity="0.55" />
+      {/* Body */}
+      <polygon points="13,11 59,11 53,52 19,52" fill="#c9825a" />
+      {/* Highlight stripe */}
+      <polygon points="14,11 24,11 20,52 12,52" fill="#d99470" opacity="0.35" />
+    </svg>
+  );
 }
 
 // --- Component ---
@@ -43,17 +59,38 @@ export default function BasilGame() {
   const [buds,  setBuds]          = useState<Bud[]>([]);
   const [drops, setDrops]         = useState<Drop[]>([]);
   const [pausedUntil, setPausedUntil] = useState(0);
+  const [highScore, setHighScore] = useState(0);
 
-  // Refs for stale-closure-safe reads inside intervals
-  const timeRef = useRef(DURATION);
-  useEffect(() => { timeRef.current = time; }, [time]);
+  // Refs for stale-closure-safe reads
+  const timeRef  = useRef(DURATION);
+  const scoreRef = useRef(0);
+  useEffect(() => { timeRef.current  = time;  }, [time]);
+  useEffect(() => { scoreRef.current = score; }, [score]);
+
+  // Load high score from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved) setHighScore(parseInt(saved, 10));
+  }, []);
+
+  // Save high score when game ends
+  useEffect(() => {
+    if (phase !== 'won' && phase !== 'lost') return;
+    const final = scoreRef.current;
+    setHighScore(prev => {
+      if (final > prev) {
+        localStorage.setItem(LS_KEY, String(final));
+        return final;
+      }
+      return prev;
+    });
+  }, [phase]);
 
   // HP zero → lost
   useEffect(() => {
     if (phase === 'playing' && hp <= 0) setPhase('lost');
   }, [hp, phase]);
 
-  // Spawn accumulators (ms elapsed since last spawn per type)
   const spawnAcc = useRef({ pest: 0, drop: 0, bud: 0 });
 
   const startGame = () => {
@@ -62,9 +99,10 @@ export default function BasilGame() {
     setPests([]); setBuds([]); setDrops([]); setPausedUntil(0);
     spawnAcc.current = { pest: 0, drop: 0, bud: 0 };
     timeRef.current  = DURATION;
+    scoreRef.current = 0;
   };
 
-  // 1-second: countdown + natural water drain
+  // 1-second: countdown + water drain
   useEffect(() => {
     if (phase !== 'playing') return;
     const t = setInterval(() => {
@@ -82,7 +120,7 @@ export default function BasilGame() {
     return () => clearInterval(t);
   }, [phase]);
 
-  // 50ms physics: drop movement, entity expiry, spawning
+  // 50ms physics: drops, expiry, spawning
   useEffect(() => {
     if (phase !== 'playing') return;
     const TICK = 50;
@@ -90,7 +128,6 @@ export default function BasilGame() {
       const now = Date.now();
       const c   = spawnCfg(timeRef.current);
 
-      // Move drops; water loss when drop hits ground
       setDrops(prev => {
         let loss = 0;
         const next = prev
@@ -100,7 +137,6 @@ export default function BasilGame() {
         return next;
       });
 
-      // Expire pests → HP loss
       setPests(prev => {
         let loss = 0;
         const next = prev.filter(p => {
@@ -111,7 +147,6 @@ export default function BasilGame() {
         return next;
       });
 
-      // Expire buds → growth paused
       setBuds(prev => {
         let anyExpired = false;
         const next = prev.filter(b => {
@@ -122,19 +157,13 @@ export default function BasilGame() {
         return next;
       });
 
-      // Spawn entities
       spawnAcc.current.pest += TICK;
       spawnAcc.current.drop += TICK;
       spawnAcc.current.bud  += TICK;
 
       if (spawnAcc.current.pest >= c.pest) {
         spawnAcc.current.pest = 0;
-        setPests(p => [...p, {
-          id: uid(),
-          x: 15 + Math.random() * 70,
-          y: 230 + Math.random() * 140,
-          bornAt: now,
-        }]);
+        setPests(p => [...p, { id: uid(), x: 15 + Math.random() * 70, y: 230 + Math.random() * 130, bornAt: now }]);
       }
       if (c.drop > 0 && spawnAcc.current.drop >= c.drop) {
         spawnAcc.current.drop = 0;
@@ -148,7 +177,6 @@ export default function BasilGame() {
     return () => clearInterval(t);
   }, [phase]);
 
-  // Click handlers
   const clickPest = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setPests(p => p.filter(x => x.id !== id));
@@ -167,12 +195,12 @@ export default function BasilGame() {
     setScore(s => s + 1);
   };
 
-  const isPlaying     = phase === 'playing';
+  const isPlaying      = phase === 'playing';
   const isGrowthPaused = pausedUntil > Date.now();
+  const isNewHighScore = (phase === 'won' || phase === 'lost') && score > 0 && score >= highScore;
 
   return (
     <section id="game" className="space-y-12">
-      {/* Header */}
       <div className="text-center max-w-2xl mx-auto">
         <h2 className="text-4xl font-bold text-slate-800 mb-4">九層塔大師挑戰</h2>
         <p className="text-slate-600">同時對抗害蟲、補充水分、摘除花穗！撐完 60 秒就贏！</p>
@@ -180,7 +208,7 @@ export default function BasilGame() {
 
       <div className="glass-card rounded-[32px] md:rounded-[40px] shadow-xl border-emerald-100 overflow-hidden">
 
-        {/* Status bar (visible during play) */}
+        {/* Status bar */}
         {isPlaying && (
           <div className="px-6 pt-5 pb-4 grid grid-cols-4 gap-4 border-b border-slate-100">
             <div>
@@ -188,10 +216,7 @@ export default function BasilGame() {
                 <span>生命</span><span>{hp}</span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                <motion.div
-                  animate={{ width: `${hp}%` }}
-                  className={`h-full ${hp < 30 ? 'bg-red-500' : 'bg-red-400'}`}
-                />
+                <motion.div animate={{ width: `${hp}%` }} className={`h-full ${hp < 30 ? 'bg-red-500' : 'bg-red-400'}`} />
               </div>
             </div>
             <div>
@@ -223,14 +248,20 @@ export default function BasilGame() {
           {/* Idle screen */}
           {phase === 'idle' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-8 p-8">
-              <div className="w-28 h-28 bg-emerald-100 rounded-full flex items-center justify-center">
-                <Sprout size={64} className="text-emerald-600" />
+              <div className="flex flex-col items-center pointer-events-none">
+                <Sprout size={72} className="text-emerald-600" />
+                <FlowerPot />
               </div>
               <div className="text-center space-y-3">
                 <h3 className="text-2xl font-bold text-slate-800">準備好了嗎？</h3>
+                {highScore > 0 && (
+                  <div className="inline-flex items-center gap-1.5 bg-yellow-50 border border-yellow-200 text-yellow-700 text-sm font-bold px-3 py-1 rounded-full">
+                    <Trophy size={14} /> 本機最高分：{highScore}
+                  </div>
+                )}
                 <div className="flex gap-6 justify-center text-sm text-slate-600 flex-wrap">
                   <span>🐛 點擊除蟲 <b>+2</b></span>
-                  <span>🌸 點擊摘心 <b>+3</b></span>
+                  <span>🌸 點擊摘除花穗 <b>+3</b></span>
                   <span>💧 點擊接水 <b>+1</b></span>
                 </div>
                 <p className="text-slate-400 text-xs">害蟲未除 → 損血｜花穗未摘 → 成長暫停｜水滴未接 → 水分下降</p>
@@ -249,7 +280,7 @@ export default function BasilGame() {
             {(phase === 'won' || phase === 'lost') && (
               <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                className="absolute inset-0 bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center gap-6 z-20"
+                className="absolute inset-0 bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center gap-5 z-20"
               >
                 {phase === 'won'
                   ? <Trophy size={80} className="text-yellow-500" />
@@ -258,9 +289,17 @@ export default function BasilGame() {
                 <h3 className="text-3xl font-bold text-slate-800">
                   {phase === 'won' ? '挑戰成功！🎉' : '植物枯萎了...'}
                 </h3>
-                <p className="text-slate-500">
-                  最終分數：<span className="text-3xl font-bold text-emerald-600 ml-1">{score}</span>
-                </p>
+                <div className="text-center space-y-1">
+                  <p className="text-slate-500">
+                    最終分數：<span className="text-3xl font-bold text-emerald-600 ml-1">{score}</span>
+                  </p>
+                  {isNewHighScore && (
+                    <p className="text-sm font-bold text-yellow-600">🏆 新的本機最高分！</p>
+                  )}
+                  {!isNewHighScore && highScore > 0 && (
+                    <p className="text-xs text-slate-400">本機最高：{highScore}</p>
+                  )}
+                </div>
                 <button
                   onClick={startGame}
                   className="flex items-center gap-2 px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition-all"
@@ -271,9 +310,19 @@ export default function BasilGame() {
             )}
           </AnimatePresence>
 
-          {/* Plant (center, fixed) */}
+          {/* Plant + Pot (center, fixed) */}
           {isPlaying && (
-            <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none" style={{ top: 150 }}>
+            <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center" style={{ top: 120 }}>
+              {isGrowthPaused && (
+                <div className="text-xs font-bold text-slate-500 whitespace-nowrap bg-white/90 px-2 py-0.5 rounded-full border border-slate-200 mb-1">
+                  成長暫停
+                </div>
+              )}
+              {hp < 30 && !isGrowthPaused && (
+                <div className="text-xs font-bold text-red-500 whitespace-nowrap bg-white/90 px-2 py-0.5 rounded-full border border-red-200 animate-pulse mb-1">
+                  ⚠️ 危險
+                </div>
+              )}
               <motion.div
                 animate={{ y: [0, -4, 0] }}
                 transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
@@ -283,20 +332,11 @@ export default function BasilGame() {
                   className={hp < 30 ? 'text-yellow-600' : isGrowthPaused ? 'text-slate-400' : 'text-emerald-500'}
                 />
               </motion.div>
-              {isGrowthPaused && (
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-500 whitespace-nowrap bg-white/90 px-2 py-0.5 rounded-full border border-slate-200">
-                  成長暫停
-                </div>
-              )}
-              {hp < 30 && (
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-xs font-bold text-red-500 whitespace-nowrap bg-white/90 px-2 py-0.5 rounded-full border border-red-200 animate-pulse">
-                  ⚠️ 危險
-                </div>
-              )}
+              <FlowerPot />
             </div>
           )}
 
-          {/* Raindrops — click to catch */}
+          {/* Raindrops */}
           {drops.map(d => (
             <button
               key={d.id}
@@ -309,7 +349,7 @@ export default function BasilGame() {
             </button>
           ))}
 
-          {/* Pests — click to remove */}
+          {/* Pests */}
           {pests.map(p => (
             <button
               key={p.id}
@@ -322,14 +362,14 @@ export default function BasilGame() {
             </button>
           ))}
 
-          {/* Flower buds — click to pinch */}
+          {/* Flower buds */}
           {buds.map(b => (
             <button
               key={b.id}
               onClick={e => clickBud(b.id, e)}
               className="absolute text-2xl leading-none active:scale-75 transition-transform select-none touch-manipulation animate-bounce"
-              style={{ left: `${b.x}%`, top: 100, transform: 'translateX(-50%)' }}
-              aria-label="摘心"
+              style={{ left: `${b.x}%`, top: 90, transform: 'translateX(-50%)' }}
+              aria-label="摘除花穗"
             >
               🌸
             </button>
@@ -339,7 +379,7 @@ export default function BasilGame() {
         {/* Legend strip */}
         <div className="px-6 py-3 flex justify-center gap-8 text-sm text-slate-400 border-t border-slate-100">
           <span>🐛 除蟲 <b className="text-slate-600">+2</b></span>
-          <span>🌸 摘心 <b className="text-slate-600">+3</b></span>
+          <span>🌸 摘除花穗 <b className="text-slate-600">+3</b></span>
           <span>💧 接水 <b className="text-slate-600">+1</b></span>
         </div>
       </div>
