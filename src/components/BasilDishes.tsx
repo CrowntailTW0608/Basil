@@ -209,3 +209,7 @@ const DISHES: DishData[] = [
 export function getRandomDish(): DishData {
   return DISHES[Math.floor(Math.random() * DISHES.length)];
 }
+
+export function getAllDishes(): DishData[] {
+  return DISHES;
+}
