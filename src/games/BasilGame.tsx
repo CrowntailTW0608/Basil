@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sprout, Trophy, AlertTriangle, RefreshCw } from 'lucide-react';
+import BasilPlantSVG from '@/src/components/BasilPlantSVG';
 
 // --- Types ---
 interface Pest { id: string; x: number; y: number; bornAt: number }
@@ -327,12 +328,12 @@ export default function BasilGame() {
                 animate={{ y: [0, -4, 0] }}
                 transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
               >
-                <Sprout
-                  size={140}
-                  className={hp < 30 ? 'text-yellow-600' : isGrowthPaused ? 'text-slate-400' : 'text-emerald-500'}
+                <BasilPlantSVG
+                  growth={Math.round((DURATION - time) / DURATION * 100)}
+                  health={hp}
+                  paused={isGrowthPaused}
                 />
               </motion.div>
-              <FlowerPot />
             </div>
           )}
 
