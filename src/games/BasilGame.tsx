@@ -10,7 +10,7 @@ import BasilPlantSVG from '@/src/components/BasilPlantSVG';
 
 // --- Types ---
 interface Pest { id: string; x: number; y: number; bornAt: number }
-interface Bud  { id: string; x: number; bornAt: number }
+interface Bud  { id: string; x: number; y: number; bornAt: number }
 interface Drop { id: string; x: number; y: number }
 type Phase = 'idle' | 'playing' | 'won' | 'lost';
 
@@ -172,7 +172,15 @@ export default function BasilGame() {
       }
       if (c.bud > 0 && spawnAcc.current.bud >= c.bud) {
         spawnAcc.current.bud = 0;
-        setBuds(b => [...b, { id: uid(), x: 30 + Math.random() * 40, bornAt: now }]);
+        // 計算當前莖的可見葉節（與 BasilPlantSVG 相同邏輯）
+        const growth = Math.round((DURATION - timeRef.current) / DURATION * 100);
+        const tipY   = 148 - (growth / 100) * 96;
+        const nodeYs = [130, 114, 99, 84, 70].filter(ny => tipY <= ny - 8);
+        if (nodeYs.length > 0) {
+          const nodeY  = nodeYs[Math.floor(Math.random() * nodeYs.length)];
+          const gameY  = 120 + nodeY - 10; // 120 = 植株 SVG top 在遊戲區的 y 偏移
+          setBuds(b => [...b, { id: uid(), x: 40 + Math.random() * 20, y: gameY, bornAt: now }]);
+        }
       }
     }, TICK);
     return () => clearInterval(t);
@@ -369,7 +377,7 @@ export default function BasilGame() {
               key={b.id}
               onClick={e => clickBud(b.id, e)}
               className="absolute text-2xl leading-none active:scale-75 transition-transform select-none touch-manipulation animate-bounce"
-              style={{ left: `${b.x}%`, top: 90, transform: 'translateX(-50%)' }}
+              style={{ left: `${b.x}%`, top: b.y, transform: 'translateX(-50%)' }}
               aria-label="摘除花穗"
             >
               🌸
