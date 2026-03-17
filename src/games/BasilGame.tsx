@@ -7,6 +7,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sprout, Trophy, AlertTriangle, RefreshCw } from 'lucide-react';
 import BasilPlantSVG from '@/src/components/BasilPlantSVG';
+import { getRandomDish } from '@/src/components/BasilDishes';
+import type { DishData } from '@/src/components/BasilDishes';
 
 // --- Types ---
 interface Pest { id: string; x: number; y: number; bornAt: number }
@@ -61,6 +63,7 @@ export default function BasilGame() {
   const [drops, setDrops]         = useState<Drop[]>([]);
   const [pausedUntil, setPausedUntil] = useState(0);
   const [highScore, setHighScore] = useState(0);
+  const [wonDish,   setWonDish]   = useState<DishData | null>(null);
 
   // Refs for stale-closure-safe reads
   const timeRef  = useRef(DURATION);
@@ -85,6 +88,11 @@ export default function BasilGame() {
       }
       return prev;
     });
+  }, [phase]);
+
+  // 勝利時隨機抽一道料理
+  useEffect(() => {
+    if (phase === 'won') setWonDish(getRandomDish());
   }, [phase]);
 
   // HP zero → lost
@@ -295,24 +303,40 @@ export default function BasilGame() {
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                 className="absolute inset-0 bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center gap-5 z-20"
               >
-                {phase === 'won'
-                  ? <Trophy size={80} className="text-yellow-500" />
-                  : <AlertTriangle size={80} className="text-red-500" />
-                }
-                <h3 className="text-3xl font-bold text-slate-800">
-                  {phase === 'won' ? '挑戰成功！🎉' : '植物枯萎了...'}
-                </h3>
-                <div className="text-center space-y-1">
-                  <p className="text-slate-500">
-                    最終分數：<span className="text-3xl font-bold text-emerald-600 ml-1">{score}</span>
-                  </p>
-                  {isNewHighScore && (
-                    <p className="text-sm font-bold text-yellow-600">🏆 新的本機最高分！</p>
-                  )}
-                  {!isNewHighScore && highScore > 0 && (
-                    <p className="text-xs text-slate-400">本機最高：{highScore}</p>
-                  )}
-                </div>
+                {phase === 'won' && wonDish ? (
+                  /* ── 勝利：隨機料理卡 ── */
+                  <>
+                    <div className="flex items-center gap-2">
+                      <Trophy size={28} className="text-yellow-500 flex-shrink-0"/>
+                      <h3 className="text-xl font-bold text-slate-800">挑戰成功！你的九層塔可以做⋯</h3>
+                    </div>
+                    <wonDish.SVG/>
+                    <div className="text-center px-2">
+                      <p className="text-2xl font-bold text-emerald-700">{wonDish.name}</p>
+                      <p className="text-xs text-slate-400 italic mt-1">{wonDish.description}</p>
+                    </div>
+                    <div className="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-2 text-sm text-slate-600 text-center max-w-xs">
+                      <span className="font-bold text-emerald-700">食材：</span>
+                      {wonDish.ingredients.join('・')}
+                    </div>
+                    <div className="text-center space-y-0.5">
+                      <p className="text-slate-500 text-sm">最終分數：<span className="text-2xl font-bold text-emerald-600 ml-1">{score}</span></p>
+                      {isNewHighScore && <p className="text-xs font-bold text-yellow-600">🏆 新的本機最高分！</p>}
+                      {!isNewHighScore && highScore > 0 && <p className="text-xs text-slate-400">本機最高：{highScore}</p>}
+                    </div>
+                  </>
+                ) : (
+                  /* ── 失敗畫面（不變）── */
+                  <>
+                    <AlertTriangle size={80} className="text-red-500"/>
+                    <h3 className="text-3xl font-bold text-slate-800">植物枯萎了...</h3>
+                    <div className="text-center space-y-1">
+                      <p className="text-slate-500">最終分數：<span className="text-3xl font-bold text-emerald-600 ml-1">{score}</span></p>
+                      {isNewHighScore && <p className="text-sm font-bold text-yellow-600">🏆 新的本機最高分！</p>}
+                      {!isNewHighScore && highScore > 0 && <p className="text-xs text-slate-400">本機最高：{highScore}</p>}
+                    </div>
+                  </>
+                )}
                 <button
                   onClick={startGame}
                   className="flex items-center gap-2 px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition-all"
