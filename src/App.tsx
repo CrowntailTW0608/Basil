@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import BasilGame from '@/src/games/BasilGame';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sun, 
@@ -45,7 +46,8 @@ const TipCard = ({ icon, title, content, color }: TipCardProps) => (
   </motion.div>
 );
 
-const SHOW_LEGACY_GAME = false;
+const SHOW_GAME = true;         // 是否顯示遊戲區塊
+const USE_LEGACY_GAME = false;  // true = 舊遊戲（種植模擬）；false = 新遊戲（除蟲＋接水＋摘心）
 
 export default function App() {
   // Game State
@@ -169,8 +171,8 @@ export default function App() {
 
       <main className="max-w-6xl mx-auto px-4 py-12 md:py-20 space-y-20 md:space-y-32">
         
-        {/* Mini Game Section (Legacy - hidden) */}
-        {SHOW_LEGACY_GAME && <section id="game" className="space-y-12">
+        {/* Game Section */}
+        {SHOW_GAME && (USE_LEGACY_GAME ? <section id="game" className="space-y-12">
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-4xl font-bold text-slate-800 mb-4">九層塔大師挑戰</h2>
             <p className="text-slate-600">你能成功將九層塔養到滿分嗎？注意水分與陽光的平衡！</p>
@@ -323,7 +325,7 @@ export default function App() {
               </div>
             )}
           </div>
-        </section>}
+        </section> : <BasilGame />)}
 
         {/* Environment Section */}
         <section id="environment" className="space-y-12">
