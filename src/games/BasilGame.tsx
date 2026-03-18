@@ -36,6 +36,14 @@ const HIT_PAD  = IS_DESKTOP ? 10  : 0;       // 桌機擴大點擊判定區 (px)
 const LS_KEY        = 'basil_game_highscore';
 const LS_UNLOCK_KEY = 'basil_unlocked_dishes';
 
+const PLANTING_TIPS = [
+  '提示：花穗未摘，葉子會變老變苦！看到花穗立刻剪掉。',
+  '提示：水分不足傷根！土乾了就澆透，直到水從底部流出。',
+  '提示：害蟲會偷吃葉子，傷口還容易感染！發現就要立刻處理。',
+  '提示：九層塔怕冷，低於 15°C 葉子會變黑，寒流來要移到室內！',
+  '提示：每隔 2-3 週施一次液態肥，葉子才會又大又香。',
+];
+
 // 桌機生成間隔延長 40%
 function spawnCfg(t: number): { pest: number; drop: number; bud: number } {
   const f = IS_DESKTOP ? 1.4 : 1.0;
@@ -193,6 +201,7 @@ export default function BasilGame() {
   const [unlockedDishes, setUnlockedDishes] = useState<Set<string>>(new Set());
   const [modalDish,      setModalDish]      = useState<DishData | null>(null);
   const [scorePopups,    setScorePopups]    = useState<ScorePopup[]>([]);
+  const [lossTip,        setLossTip]        = useState('');
 
   // Refs for stale-closure-safe reads
   const timeRef  = useRef(DURATION);
@@ -242,6 +251,13 @@ export default function BasilGame() {
   useEffect(() => {
     if (phase === 'playing' && hp <= 0) setPhase('lost');
   }, [hp, phase]);
+
+  // 失敗時隨機抽一條種植提示
+  useEffect(() => {
+    if (phase === 'lost') {
+      setLossTip(PLANTING_TIPS[Math.floor(Math.random() * PLANTING_TIPS.length)]);
+    }
+  }, [phase]);
 
   const spawnAcc = useRef({ pest: 0, drop: 0, bud: 0 });
 
@@ -495,7 +511,7 @@ export default function BasilGame() {
                     </div>
                   </>
                 ) : (
-                  /* ── 失敗畫面（不變）── */
+                  /* ── 失敗畫面 ── */
                   <>
                     <AlertTriangle size={80} className="text-red-500"/>
                     <h3 className="text-3xl font-bold text-slate-800">植物枯萎了...</h3>
@@ -504,6 +520,9 @@ export default function BasilGame() {
                       {isNewHighScore && <p className="text-sm font-bold text-yellow-600">🏆 新的本機最高分！</p>}
                       {!isNewHighScore && highScore > 0 && <p className="text-xs text-slate-400">本機最高：{highScore}</p>}
                     </div>
+                    {lossTip && (
+                      <p className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2 max-w-xs text-center">{lossTip}</p>
+                    )}
                   </>
                 )}
                 <button

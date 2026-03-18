@@ -64,7 +64,7 @@ export default function App() {
             九層塔<span className="text-emerald-600">小學堂</span>
           </h1>
           <p className="text-xs md:text-sm text-emerald-800/70 max-w-2xl mx-auto leading-relaxed">
-            恭喜你帶走了一株充滿香氣的九層塔！跟著我們的簡單指南，讓它在你的陽台茁壯成長。
+            恭喜你帶走了一株充滿香氣的九層塔！跟著我們的簡單指南，讓它在你的陽台或窗台茁壯成長。
           </p>
         </motion.div>
         
@@ -140,21 +140,25 @@ export default function App() {
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-700 flex items-center justify-center font-bold text-xl">1</div>
                   <div>
                     <h4 className="text-xl font-bold mb-2">準備盆器與土壤</h4>
-                    <p className="text-emerald-100/70">選一個底部有孔的盆子（排水才好）。土壤用一般的「培養土」混合一點「珍珠石」最理想，要保持鬆軟，不要讓土結成硬塊。</p>
+                    <p className="text-emerald-100/70">選一個底部有孔的盆子（排水才好）。土壤用一般的「培養土」混合一點「珍珠石」最理想，要保持鬆軟，不要讓土結成硬塊。珍珠石和培養土在花市或園藝店都買得到。</p>
                   </div>
                 </div>
                 <div className="flex gap-6">
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-700 flex items-center justify-center font-bold text-xl">2</div>
                   <div>
-                    <h4 className="text-xl font-bold mb-2">播種或扦插</h4>
-                    <p className="text-emerald-100/70">種子播下後覆蓋薄土即可。更簡單的方法是：剪一段 10 公分的枝條，插在水瓶裡等長根後再種進土裡，成功率極高！</p>
+                    <h4 className="text-xl font-bold mb-2">移植換盆</h4>
+                    <p className="text-emerald-100/70">把植株從小盆移到大一點的盆子，保留根部的原土球，不要抖掉。換大盆後根系有更多空間，植株會長得更茂盛！想要更多株，可以剪一段 10 公分枝條插在水瓶裡，等長根後再種進土裡。</p>
                   </div>
                 </div>
                 <div className="flex gap-6">
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-700 flex items-center justify-center font-bold text-xl">3</div>
                   <div>
                     <h4 className="text-xl font-bold mb-2">正確澆水法</h4>
-                    <p className="text-emerald-100/70">「土乾了再澆」是黃金準則。用手指插進土裡 1 公分，感覺乾乾的就澆透（直到水從底部流出）。夏天早晚各一次，冬天則 2-3 天一次。</p>
+                    <p className="text-emerald-100/70">「土乾了再澆」是黃金準則。用手指插進土裡 1 公分，感覺乾乾的就澆透（直到水從底部流出）。夏天大約每天一次，冬天則 2-3 天一次。</p>
+                    <div className="mt-3 flex items-start gap-2 bg-red-900/40 border border-red-400/40 rounded-xl px-3 py-2">
+                      <span className="text-red-300 text-base leading-none mt-0.5">⚠️</span>
+                      <p className="text-red-200 text-sm leading-snug"><span className="font-bold">過度澆水比乾旱更危險！</span>土壤長期濕透會讓根部缺氧腐爛，葉子反而先變黃掉落。摸土不乾，就不要澆。</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -179,13 +183,14 @@ export default function App() {
 
         {/* FAQ/Checklist */}
         <section id="checklist" className="max-w-3xl mx-auto space-y-12">
-          <h2 className="text-4xl font-bold text-center text-slate-800">每日照顧清單</h2>
+          <h2 className="text-4xl font-bold text-center text-slate-800">日常照顧清單</h2>
           <div className="space-y-4">
             {[
               "陽光檢查：每天是否有曬足 6 小時太陽？",
-              "水分檢查：手指插進土裡，乾了就澆透（底部流出水）。",
+              "水分檢查：手指插進土裡 1 公分，乾了才澆透（底部流出水）。摸起來還濕就不要澆，過度澆水會爛根！",
               "修剪檢查：是否有枯黃或長蟲的葉子？有的話立刻剪掉。",
               "防開花：看到頂端長出「花穗」要立刻剪掉，否則葉子會變老變苦。",
+              "施肥補充：每隔 2-3 週澆一次稀釋液態肥，葉子才會又大又香。",
               "通風確認：盆栽周圍是否有空間讓空氣流通？",
               "心情檢查：聞聞葉片的香氣，這是種植最大的樂趣！"
             ].map((item, i) => (

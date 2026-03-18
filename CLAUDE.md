@@ -45,12 +45,12 @@ public/
 頁面由導覽列錨點控制捲動，共四區塊：
 1. **Game Section** — 依 flag 切換遊戲（由 `SHOW_GAME`、`USE_LEGACY_GAME` 控制）
 2. **Environment Section** — 陽光、溫度、通風提示卡
-3. **Planting Section** — 5 步驟種植指南
-4. **Checklist Section** — 6 項日常照顧清單
+3. **Planting Section** — 3 步驟種植指南（準備盆器、移植換盆、正確澆水）＋進階摘心秘訣
+4. **Checklist Section** — 7 項日常照顧清單（含施肥）
 
 兩個 flag 均在 `App.tsx` 頂部定義：
 - `SHOW_GAME = true` — 顯示遊戲區塊
-- `USE_LEGACY_GAME = false` — `true` 用舊遊戲（`LegacyGame`）；`false` 用新遊戲（`BasilGame`）
+- `USE_LEGACY_GAME = false` — `true` 用舊遊戲（`LegacyGame`）；`false` 用新遊戲（`BasilGame`，除蟲＋接水滴＋摘花穗）
 
 ### LegacyGame.tsx 舊遊戲系統
 
