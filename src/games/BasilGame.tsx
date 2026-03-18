@@ -470,7 +470,7 @@ export default function BasilGame() {
                   <>
                     <div className="flex items-center gap-2">
                       <Trophy size={28} className="text-yellow-500 flex-shrink-0"/>
-                      <h3 className="text-xl font-bold text-slate-800">挑戰成功！你的九層塔可以做⋯</h3>
+                      <h3 className="text-xl font-bold text-slate-800">挑戰成功！今天學到的食譜：</h3>
                     </div>
                     <wonDish.SVG/>
                     <div className="text-center px-2">
@@ -600,12 +600,13 @@ export default function BasilGame() {
         </div>
       </div>
 
-      {/* 料理圖鑑解鎖面板 */}
+      {/* 料理食譜面板 */}
       {(() => {
         const allDishes = getAllDishes();
         return (
           <div className="glass-card rounded-2xl shadow border-emerald-100 px-6 py-5">
-            <p className="text-center text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">料理圖鑑</p>
+            <p className="text-center text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">料理食譜</p>
+            <p className="text-center text-xs text-slate-400 mb-4">把九層塔帶回家，自己種、自己做！</p>
             <div className="flex justify-center gap-4 flex-wrap">
               {allDishes.map(dish => {
                 const unlocked = unlockedDishes.has(dish.name);
@@ -658,6 +659,7 @@ export default function BasilGame() {
                 <span className="font-bold text-emerald-700">食材：</span>
                 {modalDish.ingredients.join('・')}
               </div>
+              <p className="text-xs text-slate-400 text-center -mt-1">把九層塔帶回家種，自己動手做做看！</p>
               <button
                 onClick={() => setModalDish(null)}
                 className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-medium text-sm transition-all"

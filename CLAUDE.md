@@ -31,21 +31,30 @@ npm run clean        # 清理 dist 目錄
 src/
   App.tsx                      # 頁面主體：導覽列 + 各內容區塊
   games/
-    BasilGame.tsx              # 主遊戲元件（所有遊戲邏輯）
+    BasilGame.tsx              # 新遊戲元件（60 秒生存挑戰）
+    LegacyGame.tsx             # 舊遊戲元件（水分/陽光種植模擬）
   components/
     BasilPlantSVG.tsx          # 植株 SVG 動畫元件
     BasilDishes.tsx            # 5 道料理的 SVG 圖示 + 資料
+public/
+  favicon.svg                  # 花穗 SVG favicon（5層，透明背景）
 ```
 
 ### App.tsx 頁面結構
 
 頁面由導覽列錨點控制捲動，共四區塊：
-1. **Game Section** — 嵌入 `<BasilGame />`（由 `SHOW_GAME` flag 控制顯示）
+1. **Game Section** — 依 flag 切換遊戲（由 `SHOW_GAME`、`USE_LEGACY_GAME` 控制）
 2. **Environment Section** — 陽光、溫度、通風提示卡
 3. **Planting Section** — 5 步驟種植指南
 4. **Checklist Section** — 6 項日常照顧清單
 
-`USE_LEGACY_GAME = false` 控制使用新版遊戲；舊版邏輯仍保留在 App.tsx 但已隱藏。
+兩個 flag 均在 `App.tsx` 頂部定義：
+- `SHOW_GAME = true` — 顯示遊戲區塊
+- `USE_LEGACY_GAME = false` — `true` 用舊遊戲（`LegacyGame`）；`false` 用新遊戲（`BasilGame`）
+
+### LegacyGame.tsx 舊遊戲系統
+
+水分／陽光種植模擬，玩家主動按「澆水」「曬太陽」維持數值，成長到 100% 獲勝。植株視覺使用 `BasilPlantSVG`（`growth`、`health` 直接對應同名 state）。
 
 ### BasilGame.tsx 遊戲系統
 
