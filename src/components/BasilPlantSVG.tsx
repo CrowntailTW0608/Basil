@@ -8,18 +8,14 @@ function Leaf({ fill, vein }: { fill: string; vein: string }) {
   return (
     <g>
       <path
-        d="M 0,0
-           C -8, 0  -14,-7  -12,-16
-           C -10,-23  -2,-28   0,-30
-           C   2,-28  10,-23  12,-16
-           C  14,-7    8, 0    0, 0 Z"
+        d="M0,0 C-5,-2 -8,-10 -5,-16 C-3,-20 0,-22 0,-22 C0,-22 3,-20 5,-16 C8,-10 5,-2 0,0Z"
         fill={fill} stroke={vein} strokeWidth="0.4"
       />
-      <line x1="0" y1="-0.5" x2="0"   y2="-27" stroke={vein} strokeWidth="0.65"/>
-      <line x1="0" y1="-9"   x2="-10" y2="-14" stroke={vein} strokeWidth="0.3"  opacity="0.6"/>
-      <line x1="0" y1="-9"   x2=" 10" y2="-14" stroke={vein} strokeWidth="0.3"  opacity="0.6"/>
-      <line x1="0" y1="-18"  x2="-7"  y2="-22" stroke={vein} strokeWidth="0.28" opacity="0.5"/>
-      <line x1="0" y1="-18"  x2=" 7"  y2="-22" stroke={vein} strokeWidth="0.28" opacity="0.5"/>
+      <line x1="0" y1="-0.5" x2="0"  y2="-20" stroke={vein} strokeWidth="0.65"/>
+      <line x1="0" y1="-7"   x2="-5" y2="-11" stroke={vein} strokeWidth="0.3"  opacity="0.6"/>
+      <line x1="0" y1="-7"   x2=" 5" y2="-11" stroke={vein} strokeWidth="0.3"  opacity="0.6"/>
+      <line x1="0" y1="-14"  x2="-3" y2="-17" stroke={vein} strokeWidth="0.28" opacity="0.5"/>
+      <line x1="0" y1="-14"  x2=" 3" y2="-17" stroke={vein} strokeWidth="0.28" opacity="0.5"/>
     </g>
   );
 }
@@ -129,9 +125,9 @@ export default function BasilPlantSVG({ growth, health, paused = false }: Props)
       )}
 
       {/* ── 主莖三組葉對（各帶葉柄，莖到節點後漸長）── */}
-      {ls148 > 0 && <LeafPair x={80} y={148} r1={-52} r2={52} sc={ls148 * 1.40} {...lp}/>}
-      {ls126 > 0 && <LeafPair x={80} y={126} r1={-52} r2={52} sc={ls126 * 1.20} {...lp}/>}
-      {ls104 > 0 && <LeafPair x={80} y={104} r1={-52} r2={52} sc={ls104 * 1.00} {...lp}/>}
+      {ls148 > 0 && <LeafPair x={80} y={148} r1={-52} r2={52} sc={ls148 * 1.68} {...lp}/>}
+      {ls126 > 0 && <LeafPair x={80} y={126} r1={-52} r2={52} sc={ls126 * 1.44} {...lp}/>}
+      {ls104 > 0 && <LeafPair x={80} y={104} r1={-52} r2={52} sc={ls104 * 1.20} {...lp}/>}
 
       {/* ── 左右分枝（弧線）── */}
       {growth >= 30 && <>
@@ -142,10 +138,10 @@ export default function BasilPlantSVG({ growth, health, paused = false }: Props)
       </>}
 
       {/* ── 分枝葉對（各帶葉柄，分枝尖到節點後漸長）── */}
-      {ls76 > 0 && <LeafPair x={66}  y={76} r1={-50} r2={5}  sc={ls76 * 0.78} {...lp}/>}
-      {ls59 > 0 && <LeafPair x={55}  y={59} r1={-50} r2={5}  sc={ls59 * 0.68} {...lp}/>}
-      {ls76 > 0 && <LeafPair x={94}  y={76} r1={50}  r2={-5} sc={ls76 * 0.78} {...lp}/>}
-      {ls59 > 0 && <LeafPair x={105} y={59} r1={50}  r2={-5} sc={ls59 * 0.68} {...lp}/>}
+      {ls76 > 0 && <LeafPair x={66}  y={76} r1={-50} r2={5}  sc={ls76 * 0.94} {...lp}/>}
+      {ls59 > 0 && <LeafPair x={55}  y={59} r1={-50} r2={5}  sc={ls59 * 0.82} {...lp}/>}
+      {ls76 > 0 && <LeafPair x={94}  y={76} r1={50}  r2={-5} sc={ls76 * 0.94} {...lp}/>}
+      {ls59 > 0 && <LeafPair x={105} y={59} r1={50}  r2={-5} sc={ls59 * 0.82} {...lp}/>}
 
       {/* ── 枝尖頂芽（55–80%）── */}
       {growth >= 55 && growth < 80 && <>
@@ -171,10 +167,10 @@ export default function BasilPlantSVG({ growth, health, paused = false }: Props)
 
       {/* ── 小枝葉片（漸長）── */}
       {lsSub > 0 && <>
-        <LeafPair x={37}  y={27} r1={-55} r2={15}  sc={lsSub * 0.52} {...lp}/>
-        <LeafPair x={57}  y={27} r1={-15} r2={55}  sc={lsSub * 0.52} {...lp}/>
-        <LeafPair x={103} y={27} r1={-55} r2={15}  sc={lsSub * 0.52} {...lp}/>
-        <LeafPair x={123} y={27} r1={-15} r2={55}  sc={lsSub * 0.52} {...lp}/>
+        <LeafPair x={37}  y={27} r1={-55} r2={15}  sc={lsSub * 0.62} {...lp}/>
+        <LeafPair x={57}  y={27} r1={-15} r2={55}  sc={lsSub * 0.62} {...lp}/>
+        <LeafPair x={103} y={27} r1={-55} r2={15}  sc={lsSub * 0.62} {...lp}/>
+        <LeafPair x={123} y={27} r1={-15} r2={55}  sc={lsSub * 0.62} {...lp}/>
       </>}
     </svg>
   );
