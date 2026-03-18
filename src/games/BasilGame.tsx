@@ -24,18 +24,25 @@ const DURATION = 60;
 // 開發用：網址加 ?god=1 可無敵觀察植株生長（不掉血、不掉水、不暫停成長）
 const GOD_MODE = typeof window !== 'undefined' &&
   new URLSearchParams(window.location.search).has('god');
+// 桌機模式：細精度指標（滑鼠/觸控板）自動降低難度
+const IS_DESKTOP = typeof window !== 'undefined' &&
+  window.matchMedia('(pointer: fine)').matches;
+
 const GAME_H   = 480;
-const PEST_TTL = 2500;
-const BUD_TTL  = 3500;
-const DROP_SPD = 3;
+const PEST_TTL = IS_DESKTOP ? 4000 : 2500;   // 桌機給更多時間點蟲
+const BUD_TTL  = IS_DESKTOP ? 5500 : 3500;   // 桌機給更多時間摘花穗
+const DROP_SPD = IS_DESKTOP ? 1.5 : 3;       // 桌機水滴下落慢一倍
+const HIT_PAD  = IS_DESKTOP ? 10  : 0;       // 桌機擴大點擊判定區 (px)
 const LS_KEY        = 'basil_game_highscore';
 const LS_UNLOCK_KEY = 'basil_unlocked_dishes';
 
+// 桌機生成間隔延長 40%
 function spawnCfg(t: number): { pest: number; drop: number; bud: number } {
-  if (t > 45) return { pest: 2600, drop: 0,    bud: 0    };
-  if (t > 30) return { pest: 2000, drop: 2000,  bud: 0    };
-  if (t > 15) return { pest: 1500, drop: 1500,  bud: 4000 };
-              return { pest: 1000, drop: 1100,  bud: 2800 };
+  const f = IS_DESKTOP ? 1.4 : 1.0;
+  if (t > 45) return { pest: 2600*f, drop: 0,       bud: 0      };
+  if (t > 30) return { pest: 2000*f, drop: 2000*f,  bud: 0      };
+  if (t > 15) return { pest: 1500*f, drop: 1500*f,  bud: 4000*f };
+              return { pest: 1000*f, drop: 1100*f,  bud: 2800*f };
 }
 
 function uid(): string {
@@ -308,11 +315,11 @@ export default function BasilGame() {
 
       if (spawnAcc.current.pest >= c.pest) {
         spawnAcc.current.pest = 0;
-        setPests(p => [...p, { id: uid(), x: 15 + Math.random() * 70, y: 230 + Math.random() * 130, bornAt: now }]);
+        setPests(p => [...p, { id: uid(), x: (IS_DESKTOP ? 25 : 15) + Math.random() * (IS_DESKTOP ? 50 : 70), y: 230 + Math.random() * 130, bornAt: now }]);
       }
       if (c.drop > 0 && spawnAcc.current.drop >= c.drop) {
         spawnAcc.current.drop = 0;
-        setDrops(d => [...d, { id: uid(), x: 8 + Math.random() * 84, y: -24 }]);
+        setDrops(d => [...d, { id: uid(), x: (IS_DESKTOP ? 20 : 8) + Math.random() * (IS_DESKTOP ? 60 : 84), y: -24 }]);
       }
       if (c.bud > 0 && spawnAcc.current.bud >= c.bud) {
         spawnAcc.current.bud = 0;
@@ -542,7 +549,7 @@ export default function BasilGame() {
               key={d.id}
               onClick={e => clickDrop(d.id, e)}
               className="absolute active:scale-75 transition-transform select-none touch-manipulation"
-              style={{ left: `${d.x}%`, top: d.y, transform: 'translateX(-50%)' }}
+              style={{ left: `${d.x}%`, top: d.y - HIT_PAD, transform: 'translateX(-50%)', padding: HIT_PAD }}
               aria-label="接水"
             >
               <WaterDrop />
@@ -555,7 +562,7 @@ export default function BasilGame() {
               key={p.id}
               onClick={e => clickPest(p.id, e)}
               className="absolute active:scale-75 transition-transform select-none touch-manipulation"
-              style={{ left: `${p.x}%`, top: p.y, transform: 'translateX(-50%)' }}
+              style={{ left: `${p.x}%`, top: p.y - HIT_PAD, transform: 'translateX(-50%)', padding: HIT_PAD }}
               aria-label="除蟲"
             >
               <Pest />
@@ -582,7 +589,7 @@ export default function BasilGame() {
               key={b.id}
               onClick={e => clickBud(b.id, e)}
               className="absolute active:scale-75 transition-transform select-none touch-manipulation"
-              style={{ left: `calc(50% + ${b.svgX - 80}px)`, top: 120 + b.svgY - 44, transform: 'translateX(-50%)' }}
+              style={{ left: `calc(50% + ${b.svgX - 80}px)`, top: 120 + b.svgY - 44 - HIT_PAD, transform: 'translateX(-50%)', padding: HIT_PAD }}
               aria-label="摘除花穗"
             >
               <div style={{ transform: `rotate(${b.rot}deg)`, transformOrigin: 'center bottom' }}>
