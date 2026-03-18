@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import BasilGame from '@/src/games/BasilGame';
 import LegacyGame from '@/src/games/LegacyGame';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Sun, Wind, Sprout, Scissors, ThermometerSun, ChevronRight, CheckCircle2, Heart } from 'lucide-react';
 
 // --- Types ---
@@ -32,6 +32,155 @@ const TipCard = ({ icon, title, content, color }: TipCardProps) => (
     <p className="text-slate-600 leading-relaxed">{content}</p>
   </motion.div>
 );
+
+// --- Pinching Demo Animation ---
+
+function DemoLeaf({ x, y, angle = 0, s = 1 }: { x: number; y: number; angle?: number; s?: number }) {
+  return (
+    <g transform={`translate(${x},${y}) rotate(${angle}) scale(${s})`}>
+      <path d="M0,0 C-5,-2 -8,-10 -5,-16 C-3,-20 0,-22 0,-22 C0,-22 3,-20 5,-16 C8,-10 5,-2 0,0Z"
+        fill="#2d8b3e" stroke="#1a5c27" strokeWidth="0.6"/>
+    </g>
+  );
+}
+
+function DemoLeafPair({ x, y, spread = 30, s = 1 }: { x: number; y: number; spread?: number; s?: number }) {
+  const rad = (spread * Math.PI) / 180;
+  const dist = 18 * s;
+  const lx = x - Math.sin(rad) * dist, ly = y - Math.cos(rad) * dist;
+  const rx = x + Math.sin(rad) * dist, ry = ly;
+  return (
+    <>
+      <line x1={x} y1={y} x2={lx} y2={ly} stroke="#3a6b1f" strokeWidth="1.4" strokeLinecap="round"/>
+      <line x1={x} y1={y} x2={rx} y2={ry} stroke="#3a6b1f" strokeWidth="1.4" strokeLinecap="round"/>
+      <DemoLeaf x={lx} y={ly} angle={-spread} s={0.85 * s}/>
+      <DemoLeaf x={rx} y={ry} angle={spread}  s={0.85 * s}/>
+    </>
+  );
+}
+
+type DemoPhase = 0 | 1 | 2 | 3;
+
+function PinchingDemo() {
+  const [phase, setPhase] = useState<DemoPhase>(0);
+
+  useEffect(() => {
+    const durations: Record<DemoPhase, number> = { 0: 1300, 1: 1200, 2: 550, 3: 2700 };
+    const id = setTimeout(() => setPhase(p => ((p + 1) % 4) as DemoPhase), durations[phase]);
+    return () => clearTimeout(id);
+  }, [phase]);
+
+  const showTop      = phase <= 1;
+  const showScissors = phase === 1;
+  const showBranches = phase === 3;
+
+  return (
+    <svg viewBox="0 0 200 210" width="150" height="158" className="mx-auto block my-5">
+      {/* Pot */}
+      <path d="M70,172 L77,200 L123,200 L130,172 Z" fill="#b56b35"/>
+      <rect x="63" y="164" width="74" height="10" rx="4" fill="#ca8050"/>
+      <ellipse cx="100" cy="164" rx="33" ry="5.5" fill="#9a5020"/>
+      <ellipse cx="100" cy="162" rx="27" ry="4"   fill="#4a2808"/>
+
+      {/* Main stem */}
+      <line x1="100" y1="158" x2="100" y2="92" stroke="#3a6b1f" strokeWidth="3" strokeLinecap="round"/>
+
+      {/* Permanent leaf pairs */}
+      <DemoLeafPair x={100} y={147} spread={38}/>
+      <DemoLeafPair x={100} y={122} spread={34}/>
+      <DemoLeafPair x={100} y={98}  spread={30}/>
+
+      {/* Top node — exits when cut */}
+      <AnimatePresence>
+        {showTop && (
+          <motion.g
+            key="top"
+            initial={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.15 }}
+            style={{ transformOrigin: '100px 92px' }}
+            transition={{ duration: 0.35 }}
+          >
+            <line x1="100" y1="92" x2="100" y2="77" stroke="#3a6b1f" strokeWidth="2.5" strokeLinecap="round"/>
+            <DemoLeafPair x={100} y={80} spread={22} s={0.75}/>
+          </motion.g>
+        )}
+      </AnimatePresence>
+
+      {/* Cut dashed line */}
+      <AnimatePresence>
+        {showScissors && (
+          <motion.line
+            key="cutline"
+            x1="55" y1="92" x2="145" y2="92"
+            stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4,3"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Scissors — slides in from right */}
+      <AnimatePresence>
+        {showScissors && (
+          <motion.g
+            key="scissors"
+            initial={{ x: 65, opacity: 1 }}
+            animate={{ x: 0,  opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ type: 'tween', duration: 0.85, ease: 'easeOut' }}
+          >
+            {/* base pos: pivot at (130,88), tip at (102,88) */}
+            <g transform="translate(130, 88)">
+              <line x1="-28" y1="-3.5" x2="7" y2="-3.5" stroke="#888" strokeWidth="2.5" strokeLinecap="round"/>
+              <line x1="-28" y1=" 3.5" x2="7" y2=" 3.5" stroke="#888" strokeWidth="2.5" strokeLinecap="round"/>
+              <circle cx="0" cy="0" r="3.5" fill="#ccc" stroke="#888" strokeWidth="0.8"/>
+              <path d="M7,-3.5 C13,-3.5 16,-6 16,-13 C16,-19 12,-22 9,-22 C5,-22 4,-18 4,-12 C4,-6 7,-3.5 7,-3.5Z"
+                fill="none" stroke="#888" strokeWidth="1.8"/>
+              <path d="M7,3.5 C13,3.5 16,6 16,13 C16,19 12,22 9,22 C5,22 4,18 4,12 C4,6 7,3.5 7,3.5Z"
+                fill="none" stroke="#888" strokeWidth="1.8"/>
+            </g>
+          </motion.g>
+        )}
+      </AnimatePresence>
+
+      {/* New branches — grow after cut */}
+      <AnimatePresence>
+        {showBranches && (
+          <motion.g key="branches">
+            <motion.path
+              d="M100,92 L63,64"
+              stroke="#3a6b1f" strokeWidth="2.5" fill="none" strokeLinecap="round"
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+              transition={{ duration: 0.65, ease: 'easeOut' }}
+            />
+            <motion.path
+              d="M100,92 L137,64"
+              stroke="#3a6b1f" strokeWidth="2.5" fill="none" strokeLinecap="round"
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+              transition={{ duration: 0.65, ease: 'easeOut', delay: 0.09 }}
+            />
+            <motion.g
+              style={{ transformOrigin: '63px 64px' }}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.66, duration: 0.45, ease: 'backOut' }}
+            >
+              <DemoLeafPair x={63} y={64} spread={22} s={0.72}/>
+            </motion.g>
+            <motion.g
+              style={{ transformOrigin: '137px 64px' }}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.78, duration: 0.45, ease: 'backOut' }}
+            >
+              <DemoLeafPair x={137} y={64} spread={22} s={0.72}/>
+            </motion.g>
+          </motion.g>
+        )}
+      </AnimatePresence>
+    </svg>
+  );
+}
 
 const SHOW_GAME = true;         // 是否顯示遊戲區塊
 const USE_LEGACY_GAME = false;  // true = 舊遊戲（種植模擬）；false = 新遊戲（除蟲＋接水＋摘心）
@@ -170,9 +319,10 @@ export default function App() {
                   <Scissors size={24} />
                   <h3 className="text-2xl font-bold">進階秘訣：摘心</h3>
                 </div>
-                <p className="text-emerald-50 mb-6 leading-relaxed">
+                <p className="text-emerald-50 mb-4 leading-relaxed">
                   當植物長到 15 公分時，把最頂端的那對葉子連莖剪掉。這會強迫它從旁邊長出新分枝，讓你的九層塔從「一根竹竿」變成「一叢灌木」，產量增加三倍！
                 </p>
+                <PinchingDemo />
                 <div className="flex items-center gap-2 text-emerald-300 text-sm font-bold">
                   <CheckCircle2 size={16} /> 越剪長越多，不要捨不得剪！
                 </div>
