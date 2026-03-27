@@ -9,6 +9,8 @@ import LegacyGame from '@/src/games/LegacyGame';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sun, Wind, Sprout, Scissors, ThermometerSun, ChevronRight, CheckCircle2, Heart } from 'lucide-react';
 
+const BASE = import.meta.env.BASE_URL;
+
 // --- Types ---
 interface TipCardProps {
   icon: React.ReactNode;
@@ -372,6 +374,18 @@ export default function App() {
             <p className="text-slate-400 text-sm md:text-base">祝你的九層塔長得又香又壯！</p>
           </div>
           
+          {/* 連結到含羞草 */}
+          <a
+            href={`${BASE}mimosa.html`}
+            className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-pink-700 hover:bg-pink-900/40 transition-colors group"
+          >
+            <span className="text-2xl">🌸</span>
+            <div className="text-left">
+              <p className="text-xs text-slate-400">也在義賣？</p>
+              <p className="font-bold text-pink-400 group-hover:text-pink-300">看看含羞草怎麼種 →</p>
+            </div>
+          </a>
+
           <div className="flex items-center gap-6">
             <div className="text-right hidden md:block">
               <div className="text-sm text-slate-500">2026 義賣會 302</div>
