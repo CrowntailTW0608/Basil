@@ -117,7 +117,7 @@ function Leaflet({ x, y, angle, foldAngle, p }: {
     <g transform={`translate(${x},${y}) rotate(${a})`}>
       <g transform={`scale(1,${sy})`}>
         <ellipse cx="0" cy="-7.5" rx="4.5" ry="8"
-          fill="#44aa44" stroke="#1e5c1e" strokeWidth="0.4" />
+          fill="url(#leafGrad)" stroke="#2d7a2d" strokeWidth="0.4" />
       </g>
     </g>
   );
@@ -333,6 +333,13 @@ export default function MimosaLeaf() {
         className="cursor-pointer select-none"
         onClick={handleClick}
       >
+        <defs>
+          <radialGradient id="leafGrad" cx="40%" cy="35%" r="60%">
+            <stop offset="0%"   stopColor="#6fcf6f" />
+            <stop offset="100%" stopColor="#2d7a2d" />
+          </radialGradient>
+        </defs>
+
         {/* 三根主幹 */}
         {STEMS.map((stem, si) => <Stem key={si} stem={stem} />)}
 
