@@ -11,6 +11,30 @@ import { Sun, Wind, Sprout, Scissors, ThermometerSun, ChevronRight, CheckCircle2
 
 const BASE = import.meta.env.BASE_URL;
 
+function MimosaFlowerIcon({ size = 28 }: { size?: number }) {
+  const N = 18;
+  const cx = 16, cy = 16, r0 = 2.8, r1 = 9.5;
+  const stamens = Array.from({ length: N }, (_, i) => {
+    const a = (i / N) * Math.PI * 2;
+    return {
+      x1: cx + Math.cos(a) * r0, y1: cy + Math.sin(a) * r0,
+      x2: cx + Math.cos(a) * r1, y2: cy + Math.sin(a) * r1,
+    };
+  });
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      {stamens.map((s, i) => (
+        <line key={i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+          stroke="#f472b6" strokeWidth="1.1" strokeLinecap="round" />
+      ))}
+      {stamens.map((s, i) => (
+        <circle key={i} cx={s.x2} cy={s.y2} r="1.6" fill="#fda4af" />
+      ))}
+      <circle cx={cx} cy={cy} r={r0} fill="#db2777" />
+    </svg>
+  );
+}
+
 // --- Types ---
 interface TipCardProps {
   icon: React.ReactNode;
@@ -379,7 +403,7 @@ export default function App() {
             href={`${BASE}mimosa.html`}
             className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-pink-700 hover:bg-pink-900/40 transition-colors group"
           >
-            <span className="text-2xl">🌸</span>
+            <MimosaFlowerIcon size={32} />
             <div className="text-left">
               <p className="text-xs text-slate-400">也在義賣？</p>
               <p className="font-bold text-pink-400 group-hover:text-pink-300">看看含羞草怎麼種 →</p>

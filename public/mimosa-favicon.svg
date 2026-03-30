@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- 含羞草花：放射雄蕊絨球 -->
+  <g transform="translate(16,16)">
+    <!-- 18 根雄蕊 -->
+    <line x1="0"    y1="2.8"  x2="0"    y2="9.5"  stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="2.6"  y1="1.1"  x2="8.8"  y2="3.8"  stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="2.8"  y1="-1.0" x2="9.5"  y2="-3.4" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="1.0"  y1="-2.6" x2="3.4"  y2="-8.8" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="0"    y1="-2.8" x2="0"    y2="-9.5" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="-1.0" y1="-2.6" x2="-3.4" y2="-8.8" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="-2.8" y1="-1.0" x2="-9.5" y2="-3.4" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="-2.6" y1="1.1"  x2="-8.8" y2="3.8"  stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="0"    y1="2.8"  x2="0"    y2="9.5"  stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="1.9"  y1="2.1"  x2="6.4"  y2="7.1"  stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="2.7"  y1="0.7"  x2="9.2"  y2="2.4"  stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="2.7"  y1="-0.7" x2="9.2"  y2="-2.4" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="1.9"  y1="-2.1" x2="6.4"  y2="-7.1" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="0.7"  y1="-2.7" x2="2.4"  y2="-9.2" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="-0.7" y1="-2.7" x2="-2.4" y2="-9.2" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="-1.9" y1="-2.1" x2="-6.4" y2="-7.1" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="-2.7" y1="-0.7" x2="-9.2" y2="-2.4" stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="-2.7" y1="0.7"  x2="-9.2" y2="2.4"  stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <line x1="-1.9" y1="2.1"  x2="-6.4" y2="7.1"  stroke="#f472b6" stroke-width="1.1" stroke-linecap="round"/>
+    <!-- 末端花葯圓點 -->
+    <circle cx="0"    cy="9.5"  r="1.6" fill="#fda4af"/>
+    <circle cx="8.8"  cy="3.8"  r="1.6" fill="#fda4af"/>
+    <circle cx="9.5"  cy="-3.4" r="1.6" fill="#fda4af"/>
+    <circle cx="3.4"  cy="-8.8" r="1.6" fill="#fda4af"/>
+    <circle cx="0"    cy="-9.5" r="1.6" fill="#fda4af"/>
+    <circle cx="-3.4" cy="-8.8" r="1.6" fill="#fda4af"/>
+    <circle cx="-9.5" cy="-3.4" r="1.6" fill="#fda4af"/>
+    <circle cx="-8.8" cy="3.8"  r="1.6" fill="#fda4af"/>
+    <circle cx="6.4"  cy="7.1"  r="1.6" fill="#fda4af"/>
+    <circle cx="9.2"  cy="2.4"  r="1.6" fill="#fda4af"/>
+    <circle cx="9.2"  cy="-2.4" r="1.6" fill="#fda4af"/>
+    <circle cx="6.4"  cy="-7.1" r="1.6" fill="#fda4af"/>
+    <circle cx="2.4"  cy="-9.2" r="1.6" fill="#fda4af"/>
+    <circle cx="-2.4" cy="-9.2" r="1.6" fill="#fda4af"/>
+    <circle cx="-6.4" cy="-7.1" r="1.6" fill="#fda4af"/>
+    <circle cx="-9.2" cy="-2.4" r="1.6" fill="#fda4af"/>
+    <circle cx="-9.2" cy="2.4"  r="1.6" fill="#fda4af"/>
+    <circle cx="-6.4" cy="7.1"  r="1.6" fill="#fda4af"/>
+    <!-- 中心 -->
+    <circle cx="0" cy="0" r="2.8" fill="#db2777"/>
+  </g>
+</svg>

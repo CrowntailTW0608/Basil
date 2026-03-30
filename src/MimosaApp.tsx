@@ -6,7 +6,33 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Sun, Wind, ThermometerSun, ChevronRight, Heart, Sprout } from 'lucide-react';
-import MimosaLeaf from '@/src/components/MimosaLeaf';
+
+function MimosaFlowerIcon({ size = 28 }: { size?: number }) {
+  const N = 18;
+  const cx = 16, cy = 16, r0 = 2.8, r1 = 9.5;
+  const stamens = Array.from({ length: N }, (_, i) => {
+    const a = (i / N) * Math.PI * 2;
+    return {
+      x1: cx + Math.cos(a) * r0,
+      y1: cy + Math.sin(a) * r0,
+      x2: cx + Math.cos(a) * r1,
+      y2: cy + Math.sin(a) * r1,
+    };
+  });
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      {stamens.map((s, i) => (
+        <line key={i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
+          stroke="#f472b6" strokeWidth="1.1" strokeLinecap="round" />
+      ))}
+      {stamens.map((s, i) => (
+        <circle key={i} cx={s.x2} cy={s.y2} r="1.6" fill="#fda4af" />
+      ))}
+      <circle cx={cx} cy={cy} r={r0} fill="#db2777" />
+    </svg>
+  );
+}
+import MimosaGame from '@/src/games/MimosaGame';
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -72,7 +98,7 @@ export default function MimosaApp() {
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-pink-100 shadow-sm overflow-x-auto no-scrollbar">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-start md:justify-center gap-6 md:gap-8 whitespace-nowrap">
           {[
-            { name: '互動', id: 'touch' },
+            { name: '遊戲', id: 'game' },
             { name: '秘訣', id: 'environment' },
             { name: '栽種', id: 'planting' },
             { name: '清單', id: 'checklist' },
@@ -93,19 +119,16 @@ export default function MimosaApp() {
 
       <main className="max-w-6xl mx-auto px-4 py-12 md:py-20 space-y-20 md:space-y-32">
 
-        {/* 互動區 */}
-        <section id="touch" className="space-y-10">
+        {/* 記憶遊戲 */}
+        <section id="game" className="space-y-10">
           <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-4xl font-bold text-slate-800 mb-4">輕碰看看！</h2>
+            <h2 className="text-4xl font-bold text-slate-800 mb-4">記憶挑戰！</h2>
             <p className="text-slate-600">
-              含羞草的葉片對觸碰非常敏感，這叫做「感震性」。碰一下，葉片會在幾秒內收合；放著不動，它又會慢慢展開。
+              電腦會依序讓複葉收合——記住順序，輪到你時按相同順序點擊。每輪多加一片，看你能記到幾輪？
             </p>
           </div>
           <div className="glass-card rounded-[32px] p-8 md:p-12 flex flex-col items-center gap-6 shadow-xl border-pink-100">
-            <MimosaLeaf />
-            <div className="max-w-sm text-center space-y-2 text-sm text-slate-500 border-t border-slate-100 pt-4 w-full">
-              <p>⚠️ 雖然好玩，但<span className="font-bold text-slate-700">不要太頻繁觸碰</span>——每次收合都消耗植物能量，頻繁觸碰會讓含羞草漸漸變弱。</p>
-            </div>
+            <MimosaGame />
           </div>
         </section>
 
@@ -234,7 +257,7 @@ export default function MimosaApp() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
           <div className="space-y-2 text-center md:text-left">
             <h2 className="text-2xl md:text-3xl font-bold flex items-center justify-center md:justify-start gap-2">
-              <Sprout style={{ color: '#f472b6' }} /> 含羞草小學堂
+              <MimosaFlowerIcon /> 含羞草小學堂
             </h2>
             <p className="text-slate-400 text-sm md:text-base">祝你的含羞草越來越茂盛，越來越不害羞！</p>
           </div>

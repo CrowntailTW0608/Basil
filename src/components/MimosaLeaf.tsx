@@ -7,11 +7,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 // ── 常數 ─────────────────────────────────────────────────────
-const N_STEMS  = 3;
-const N_PER    = 5;                   // 每株複葉數
-const N_LEAVES = N_STEMS * N_PER;    // 15
-const N_PINNAE = 8;
-const PETIOLE  = 14;
+export const N_STEMS  = 3;
+export const N_PER    = 5;                   // 每株複葉數
+export const N_LEAVES = N_STEMS * N_PER;    // 15
+export const N_PINNAE = 8;
+export const PETIOLE  = 14;
 
 const PX_RATIO = [0.06, 0.19, 0.31, 0.44, 0.56, 0.69, 0.81, 0.92] as const;
 
@@ -27,7 +27,7 @@ const PINNA_DATA = [
 ] as const;
 
 // ── 資料結構 ──────────────────────────────────────────────────
-interface LeafAttach {
+export interface LeafAttach {
   li: number;           // 全域複葉 index (0-14)
   x: number;           // 附著點 x（主幹上）
   y: number;           // 附著點 y
@@ -36,7 +36,7 @@ interface LeafAttach {
   rachis: number;      // 羽軸長
 }
 
-interface StemDef {
+export interface StemDef {
   /** 主幹折線節點（拋物線近似）含根部與頂端 */
   points: [number, number][];
   leaves: LeafAttach[];
@@ -48,7 +48,7 @@ interface StemDef {
  *   Stem 1: 向右微彎（較挺）
  *   Stem 2: 向左彎（-x）
  */
-const STEMS: StemDef[] = [
+export const STEMS: StemDef[] = [
   // ── 株 1：向右曲折 ──────────────────────────────────────────
   {
     points: [
@@ -153,7 +153,7 @@ function Pinna({ x, y, angle, length, p }: {
 }
 
 // ── LeafUnit ─────────────────────────────────────────────────
-function LeafUnit({ leaf, pinnaP }: { leaf: LeafAttach; pinnaP: number[] }) {
+export function LeafUnit({ leaf, pinnaP }: { leaf: LeafAttach; pinnaP: number[] }) {
   const { x, y, side, angle, rachis } = leaf;
   const sx = side === 'L' ? -1 : 1;
   const px = PX_RATIO.map(r => r * rachis + PETIOLE);
@@ -174,7 +174,7 @@ function LeafUnit({ leaf, pinnaP }: { leaf: LeafAttach; pinnaP: number[] }) {
 }
 
 // ── 主幹 SVG ─────────────────────────────────────────────────
-function Stem({ stem }: { stem: StemDef }) {
+export function Stem({ stem }: { stem: StemDef }) {
   const pts = stem.points.map(([x, y]) => `${x},${y}`).join(' ');
   const base = stem.points[0];
   return (
@@ -278,19 +278,24 @@ export default function MimosaLeaf() {
   }, [tick]);
 
   const handleClick = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
-    const svg  = e.currentTarget;
-    const rect = svg.getBoundingClientRect();
-    const scale = 660 / rect.width;
-    const svgX = (e.clientX - rect.left) * scale;
-    const svgY = (e.clientY - rect.top)  * scale;
+    const svg = e.currentTarget;
+    const pt  = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    const { x: svgX, y: svgY } = pt.matrixTransform(svg.getScreenCTM()!.inverse());
 
-    // 找距離最近且閒置的複葉
+    // 找距離最近且閒置的複葉（以羽軸中點為基準）
     let bestLeaf: LeafAttach | null = null;
     let bestDist = Infinity;
     STEMS.forEach(stem => {
       stem.leaves.forEach(leaf => {
         if (animsRef.current[leaf.li] !== null) return;
-        const d = Math.hypot(svgX - leaf.x, svgY - leaf.y);
+        const sx  = leaf.side === 'L' ? -1 : 1;
+        const rad = (leaf.angle * Math.PI) / 180;
+        const mid = PETIOLE + leaf.rachis / 2;
+        const mx  = leaf.x + sx * mid * Math.cos(rad);
+        const my  = leaf.y +      mid * Math.sin(rad);
+        const d   = Math.hypot(svgX - mx, svgY - my);
         if (d < bestDist) { bestDist = d; bestLeaf = leaf; }
       });
     });
